@@ -33,7 +33,7 @@ var upload = multer({
 const Advert = require('../models/advert');
 
 router.get('/',(req,res,next)=>{
-    Advert.find()
+    Advert.find().sort({ilan_tarihi:-1})
     .exec()
     .then(docs => {
         const response = {
@@ -75,6 +75,9 @@ router.get('/',(req,res,next)=>{
 
 router.post('/',upload.single('ilan_url'),(req,res,next)=>{
     console.log(req.file);
+    if(req.file.path==null){
+        req.file.path="uploads\resimyok.png"
+        }
 ;    const advert = new Advert({
         _id: new mongoose.Types.ObjectId(),
         kullanici_id:req.body.kullanici_id,
@@ -89,25 +92,25 @@ router.post('/',upload.single('ilan_url'),(req,res,next)=>{
         mahalle:req.body.mahalle
     });
     advert.save()
-    .then(reslut => {
-        console.log(reslut);
+    .then(result => {
+        
         res.status(201).json({
             message: 'Created advert succefully',
             createdAdvert:{
-                _id: reslut._id,
-                kullanici_id:reslut.kullanici_id,
-                ilan_adi:reslut.ilan_adi,
-                ilan_aciklama:reslut.ilan_aciklama,
-                ilan_url:[reslut.ilan_url],
-                fiyat:reslut.fiyat,
-                ilan_durumu:reslut.ilan_durumu,
-                ilan_tarihi:reslut.ilan_tarihi,
-                sehir:reslut.sehir,
-                ilce:reslut.ilce,
-                mahalle:reslut.mahalle,
+                _id: result._id,
+                kullanici_id:result.kullanici_id,
+                ilan_adi:result.ilan_adi,
+                ilan_aciklama:result.ilan_aciklama,
+                ilan_url:[result.ilan_url],
+                fiyat:result.fiyat,
+                ilan_durumu:result.ilan_durumu,
+                ilan_tarihi:result.ilan_tarihi,
+                sehir:result.sehir,
+                ilce:result.ilce,
+                mahalle:result.mahalle,
                 request:{
                     type: 'GET',
-                    url: 'http:/localhost:5000/apiadverts/'+ reslut._id
+                    url: 'http:/localhost:5000/apiadverts/'+ result._id
                 }
             }
         })
@@ -117,7 +120,7 @@ router.post('/',upload.single('ilan_url'),(req,res,next)=>{
     });
 });
 
-router.get('/:advertId',(req,res,next)=>{
+router.get('/advertId=:advertId',(req,res,next)=>{
     const id = req.params.advertId;
     Advert.findById(id)
     .select('_id kullanici_id ilan_adi ilan_aciklama ilan_url fiyat ilan_durum ilan_tarihi sehir ilce mahalle')
@@ -130,7 +133,7 @@ router.get('/:advertId',(req,res,next)=>{
                 request:{
                     type:'GET',
                     description: 'GET_ALL_PRODUCTS',
-                    url:'http://localhost:5000/api/adverds'
+                    url:'http://localhost:5000/api/adverts'
                 }
             });
         }else{
@@ -157,7 +160,7 @@ router.patch('/:advertId',(req,res,next)=>{
             message: 'Advert Updated',
             request:{
                 type:'GET',
-                url:'http:/localhost:5000/adverds/'+id
+                url:'http:/localhost:5000/adverts/'+id
             }
         });
     })
