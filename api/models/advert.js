@@ -2,7 +2,8 @@ var mongoose =require('mongoose');
 
 var advertSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    kullanici_id:String,
+    kullanici_id:mongoose.Schema.Types.ObjectId,
+    kategori:String,
     ilan_adi:{type:String,require:true},
     ilan_aciklama:String,
     ilan_url:String,

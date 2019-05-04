@@ -1,7 +1,7 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-var userModel = require('../models/kullanici');
+var userModel = require('../models/user');
 var mongoose = require('mongoose');
 
 
@@ -17,7 +17,7 @@ router.get('/',(req,res)=>{
 
 
 router.post('/posts',verifyToken, (req,res)=>{
-    jwt.verify(req,token,'secretkey',(err,authData)=>{
+    jwt.verify(req.token,process.env.JWT_KEY,(err,authData)=>{
         if(err){
             res.sendStatus(403);
         }else{
@@ -26,12 +26,13 @@ router.post('/posts',verifyToken, (req,res)=>{
                 authData
             });
         }
+        console.log(authData);
 
     });
 });
 
 router.post('/login',(req,res)=>{
-    userModel.find({kullaniciAdi: req.body.kullaniciAdi})
+    userModel.find({email: req.body.email})
     .exec()
     .then(user =>{
         if(user.length < 1){
@@ -49,15 +50,18 @@ router.post('/login',(req,res)=>{
                 console.log("Giriş işlemi başarılı")
                 const token = jwt.sign({
                     userId:user[0]._id,
-                    kullaniciAdi:user[0].kullaniciAdi
+                    email:user[0].email
                 },process.env.JWT_KEY,{
                     expiresIn: "1h"
                 }
+                
                 );
+                console.log(token);
                 return res.status(200).json({
                     mesage: 'Auth successful',
                     token:token
                 })
+                
             }
             console.log("Şifre yanlış")
             return res.status(401).json({
@@ -95,7 +99,6 @@ router.post('/signup',(req,res,next)=>{
                         _id: new mongoose.Types.ObjectId(),
                         ad: req.body.ad,
                         soyad: req.body.soyad,
-                        kullaniciAdi: req.body.kullaniciAdi,
                         email : req.body.email,
                         sifre: hash
                         });
