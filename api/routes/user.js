@@ -19,6 +19,7 @@ router.get('/',(req,res)=>{
 router.post('/posts',verifyToken, (req,res)=>{
     jwt.verify(req.token,process.env.JWT_KEY,(err,authData)=>{
         if(err){
+            console.log(err);
             res.sendStatus(403);
         }else{
             res.json({
@@ -54,7 +55,7 @@ router.post('/login',(req,res)=>{
                 },process.env.JWT_KEY,{
                     expiresIn: "1h"
                 }
-                
+
                 );
                 console.log(token);
                 return res.status(200).json({
@@ -142,7 +143,8 @@ router.delete('/:userId',(req,res,next)=>{
 
 function verifyToken(req,res,next){
     //get auth header value
-    const bearerHeader = req.headers['authorization'];
+    const bearerHeader = req.body['authorization'];
+    console.log(bearerHeader);
     //Check if bearer is undefined
     if(typeof bearerHeader !== 'undefined'){
         //Split at the space
