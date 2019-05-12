@@ -44,8 +44,10 @@ app.use(function (req, res, next) {
 
 const advertRoutes = require('./api/routes/adverts');
 const userRoutes = require('./api/routes/user');
+const messageRoutes = require('./api/routes/messages');
 app.use('/api/user',userRoutes);
 app.use('/api/adverts',advertRoutes);
+app.use('/api/messages',messageRoutes);
 
 //Handeling Error
 app.use((req,res,next)=>{

@@ -10,9 +10,6 @@ var advertSchema = mongoose.Schema({
     fiyat:{type:Number,require:true},
     ilan_durumu:Boolean,
     ilan_tarihi:{type:Date,default:Date.now},
-    sehir:{type:String,require:true},
-    ilce:{type:String,require:true},
-    mahalle:{type:String,require:true}
 },{collection:'ilanlar'}); 
 
 
