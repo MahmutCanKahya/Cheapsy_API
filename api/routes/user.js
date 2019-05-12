@@ -210,7 +210,6 @@ router.patch("/userId=:userId", upload.single("resim"), (req, res, next) => {
       $set: {
         ad: req.body.ad,
         soyad: req.body.soyad,
-        sifre: req.body.sifre,
         email: req.body.email,
         sehir: req.body.sehir,
         hakkinda: req.body.hakkinda,

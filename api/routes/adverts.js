@@ -196,6 +196,7 @@ router.get("/category/categoryName=:categoryName", (req, res, next) => {
   const categoryName = req.params.categoryName;
   console.log(categoryName);
   Advert.find({ kategori: categoryName })
+    .sort({ ilan_tarihi: -1 })
     .exec()
     .then(docs => {
       const response = {
