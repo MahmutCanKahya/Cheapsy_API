@@ -204,17 +204,22 @@ router.get("/userId=:userId", (req, res, next) => {
 
 router.patch("/userId=:userId", upload.single("resim"), (req, res, next) => {
   const id = req.params.userId;
+  if (typeof req.file === "undefined") {
+    image=""
+  }
+  else{
+    image=req.file.path
+  }
   userModel.update(
     { _id: id },
     {
       $set: {
         ad: req.body.ad,
         soyad: req.body.soyad,
-        email: req.body.email,
         sehir: req.body.sehir,
         hakkinda: req.body.hakkinda,
         adres: req.body.adres,
-        resim: req.file.path
+        resim: image
       }
     }
   )
