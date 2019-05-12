@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 const Message = require("../models/messages/message");
 const Conversation = require("../models/messages/conversation");
 
-router.get("/messageId=:messageId", (req, res, next) => {
-  const id = req.params.messageId;
-  Message.find({konusmaciId:id}).select('_id gonderici mesaj mesaj_zaman konusmaciId')
+router.get("/kullaniciId=:kullaniciId", (req, res, next) => {
+  const id = req.params.kullaniciId;
+  Message.find({gonderici:id}).select('_id gonderici mesaj mesaj_zaman konusmaciId')
   .exec()
   .then(doc => {
       console.log("From database = ",doc);
