@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Message = require("../models/messages/message");
 const Conversation = require("../models/messages/conversation");
 
+//girilen kullanici id sine karşılık gelen tüm konusmadiyologlarını json formatı ile döndürür//
 router.get("/kullaniciId=:kullaniciId", (req, res, next) => {
   const id = req.params.kullaniciId;
   Conversation.find({konusmacilar:id}).select('_id konusmacilar')
@@ -24,7 +25,9 @@ router.get("/kullaniciId=:kullaniciId", (req, res, next) => {
       res.status(500).json({error:err});
   });
 });
+//girilen kullanici id sine karşılık gelen tüm konusmadiyologlarını json formatı ile döndürür//
 
+//girilen konusmaIdsine göre o konusmadaki tüm mesajları json formatı ile döndürür//
 router.get("/konusmaId=:konusmaId", (req, res, next) => {
   const id = req.params.konusmaId;
   Message.find({konusmaciId:id}).select('_id gonderici mesaj mesaj_zaman konusmaciId')
@@ -44,7 +47,9 @@ router.get("/konusmaId=:konusmaId", (req, res, next) => {
       res.status(500).json({error:err});
   });
 });
+//girilen konusmaIdsine göre o konusmadaki tüm mesajları json formatı ile döndürür//
 
+//Yeni bir mesaj olusturmak için konusmaciId , mesaj , gonderici ve mesaj zaman ile birlikte sunucuya gönderilir.//
 router.post("/", (req, res, next) => {
 
   const message = new Message({
@@ -77,7 +82,9 @@ router.post("/", (req, res, next) => {
     });
 
 });
+//Yeni bir mesaj olusturmak için konusmaciId , mesaj , gonderici ve mesaj zaman ile birlikte sunucuya gönderilir.//
 
+//gelen id leri eşleştirerek bir ilişki kurar//
 router.post("/conversation", (req, res, next) => {
   const conversation = new Conversation({
     _id: new mongoose.Types.ObjectId(),
@@ -103,5 +110,6 @@ router.post("/conversation", (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//gelen id leri eşleştirerek bir ilişki kurar//
 
 module.exports = router;
