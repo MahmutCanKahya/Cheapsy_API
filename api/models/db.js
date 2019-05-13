@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('../../node_modules/bluebird');
 
 var mongoDB= 'mongodb://3.16.138.226:27017/cheapsy';
-
+//Database ile bağlantı kurdugumuz yer.
 mongoose.connect(mongoDB,function(err,err){
     useMongoClient:true;
     if(err){

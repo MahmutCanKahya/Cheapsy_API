@@ -7,6 +7,7 @@ const multer = require("multer");
 
 var router = express.Router();
 
+//sunucuya indirilcek resmin formatı ve boyutunun ayarlandığı yer//
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, "uploads/users");
@@ -35,14 +36,9 @@ var upload = multer({
   },
   fileFilter: fileFilter
 });
+//sunucuya indirilcek resmin formatı ve boyutunun ayarlandığı yer//
 
-router.get("/", (req, res) => {
-  res.status(200).json({
-    message: "Welcome to the API"
-  });
-  console.log("test api");
-});
-
+//Kullanici giriş yapmışmı diye token i okuyor eğer giriş yapmıssa kullaniic id sini döndürüyor//
 router.post("/posts", verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
     if (err) {
@@ -57,7 +53,10 @@ router.post("/posts", verifyToken, (req, res) => {
     console.log(authData);
   });
 });
+//Kullanici giriş yapmışmı diye token i okuyor eğer giriş yapmıssa kullaniic id sini döndürüyor//
 
+//Kullanici mail ve sifresini girerek login'e post istei yapıyor eğer mail varsa sifrelenmiş şifreyi çözüp kontrol ediyor eğer
+//şifre uygunsa giriş işlemini yapıyor
 router.post("/login", (req, res) => {
   userModel
     .find({ email: req.body.email })
@@ -105,7 +104,11 @@ router.post("/login", (req, res) => {
       });
     });
 });
+//Kullanici mail ve sifresini girerek login'e post istei yapıyor eğer mail varsa sifrelenmiş şifreyi çözüp kontrol ediyor eğer
+//şifre uygunsa giriş işlemini yapıyor
 
+//kullanici bilgilerini alıyor eğer email varsa 409 hatası döndürüyor , eğer email veritabanında mevcut değilse girilen şifreyi
+//şifreleyip veritabanına kaydediyor
 router.post("/signup", (req, res, next) => {
   userModel
     .find({ email: req.body.email })
@@ -154,8 +157,11 @@ router.post("/signup", (req, res, next) => {
     })
     .catch();
 });
+//kullanici bilgilerini alıyor eğer email varsa 409 hatası döndürüyor , eğer email veritabanında mevcut değilse girilen şifreyi
+//şifreleyip veritabanına kaydediyor
 
-router.delete("/:userId", (req, res, next) => {
+//verilen idye göre kullanıcının tüm bilgilerini veritabanından siler.//
+router.delete("/userId=:userId", (req, res, next) => {
   userModel
     .remove({ _id: req.params.userId })
     .exec()
@@ -171,7 +177,9 @@ router.delete("/:userId", (req, res, next) => {
       });
     });
 });
+//verilen idye göre kullanıcının tüm bilgilerini veritabanından siler.//
 
+//Tek bir kullanıcıya ait bilgileri json formatında döndürür//
 router.get("/userId=:userId", (req, res, next) => {
     const id = req.params.userId;
   userModel.findById(id)
@@ -201,11 +209,13 @@ router.get("/userId=:userId", (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//Tek bir kullanıcıya ait bilgileri json formatında döndürür//
 
+//Tek bir kullanıcının bilgilerini değiştirmek istiyorsak bu linkte patch ederiz//
 router.patch("/userId=:userId", upload.single("resim"), (req, res, next) => {
   const id = req.params.userId;
   if (typeof req.file === "undefined") {
-    image=""
+    image=req.body.resim
   }
   else{
     image=req.file.path
@@ -239,26 +249,26 @@ router.patch("/userId=:userId", upload.single("resim"), (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//Tek bir kullanıcının bilgilerini değiştirmek istiyorsak bu linkte patch ederiz//
 
 function verifyToken(req, res, next) {
-  //get auth header value
+  //headerdan kimlik doğrulama bilgisini alır
   const bearerHeader = req.body["authorization"];
   console.log(bearerHeader);
-  //Check if bearer is undefined
+  //bearerHeader boşmu diye kontrol ediyor
   if (typeof bearerHeader !== "undefined") {
-    //Split at the space
+    //bir boşluk öteliyor
     const bearer = bearerHeader.split(" ");
-    // Get token from array
+    // token arrayini yerleştiriyor
     const bearerToken = bearer[1];
-    //Set the token
+    //tokeni geri döndürüyor
     req.token = bearerToken;
-    //Net middleware
+    //bu fonksiyon bir middleware oldugu için next işlemini yapmamız gerekir.
     next();
   } else {
-    //Forbidden
+    //eğer token ulaşamazsa hata döndürür.
     res.sendStatus(403);
   }
-
   next;
 }
 

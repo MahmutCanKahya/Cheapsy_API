@@ -3,6 +3,9 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
 
+
+//sunucuya indirilcek resmin formatı ve boyutunun ayarlandığı yer//
+
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, "uploads/adverts");
@@ -32,8 +35,12 @@ var upload = multer({
   fileFilter: fileFilter
 });
 
+//sunucuya indirilcek resmin formatı ve boyutunun ayarlandığı yer//
+
 const Advert = require("../models/advert");
 
+
+//Veritabanındaki tüm kayıtları sondan başa doğru json formatında geri döndüren get isteği//
 router.get("/", (req, res, next) => {
   Advert.find()
     .sort({ ilan_tarihi: -1 })
@@ -73,7 +80,9 @@ router.get("/", (req, res, next) => {
       releaseEvents.status(500).json(err);
     });
 });
+//Veritabanındaki tüm kayıtları sondan başa doğru json formatında geri döndüren get isteği//
 
+//İlan yayınlancağı zaman bu urlye  post isteği yaparak ilanı veri tabanına kaydediyoruz//
 router.post("/", upload.single("ilan_url"), (req, res, next) => {
   console.log(req.file);
   if (req.file.path == null) {
@@ -119,7 +128,9 @@ router.post("/", upload.single("ilan_url"), (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//İlan yayınlancağı zaman bu urlye  post isteği yaparak ilanı veri tabanına kaydediyoruz//
 
+//Tek bir ürüne tıklandıgında tek bir ürüne ayit bilgileri gösteren ve json formatında geri döndüren get isteği//
 router.get("/advertId=:advertId", (req, res, next) => {
   const id = req.params.advertId;
   Advert.findById(id)
@@ -149,7 +160,9 @@ router.get("/advertId=:advertId", (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//Tek bir ürüne tıklandıgında tek bir ürüne ayit bilgileri gösteren ve json formatında geri döndüren get isteği//
 
+//İlanda güncelleme yapılınca bu linke istek yapılıcak//
 router.patch("/advertId=:advertId", (req, res, next) => {
   const id = req.params.advertId;
   const updateOps = {};
@@ -173,7 +186,9 @@ router.patch("/advertId=:advertId", (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//İlanda güncelleme yapılınca bu linke istek yapılıcak//
 
+//İlan kaydını silmemize yarıyor//
 router.delete("/advertId=:advertId", (req, res, next) => {
   const id = req.params.advertId;
   Advert.remove({ _id: id })
@@ -191,7 +206,9 @@ router.delete("/advertId=:advertId", (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
+//İlan kaydını silmemize yarıyor//
 
+//Kategoriye ayit ilanları listeliyor//
 router.get("/category/categoryName=:categoryName", (req, res, next) => {
   const categoryName = req.params.categoryName;
   console.log(categoryName);
@@ -232,5 +249,6 @@ router.get("/category/categoryName=:categoryName", (req, res, next) => {
       releaseEvents.status(500).json(err);
     });
 });
+//Kategoriye ayit ilanları listeliyor//
 
 module.exports = router;

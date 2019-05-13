@@ -7,7 +7,27 @@ const Conversation = require("../models/messages/conversation");
 
 router.get("/kullaniciId=:kullaniciId", (req, res, next) => {
   const id = req.params.kullaniciId;
-  Message.find({gonderici:id}).select('_id gonderici mesaj mesaj_zaman konusmaciId')
+  Conversation.find({konusmacilar:id}).select('_id konusmacilar')
+  .exec()
+  .then(doc => {
+      console.log("From database = ",doc);
+      if(doc){
+          res.status(200).json({
+              message:doc,
+          });
+      }else{
+          res.status(404).json({message:'No valid entry found for provided ID'})
+      }
+  })
+  .catch(err=>{
+      console.log(err);
+      res.status(500).json({error:err});
+  });
+});
+
+router.get("/konusmaId=:konusmaId", (req, res, next) => {
+  const id = req.params.konusmaId;
+  Message.find({konusmaciId:id}).select('_id gonderici mesaj mesaj_zaman konusmaciId')
   .exec()
   .then(doc => {
       console.log("From database = ",doc);
